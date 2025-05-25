@@ -4,6 +4,10 @@
 
 ---
 
+![Unity](https://img.shields.io/badge/Engine-Unity-232c37?logo=unity&logoColor=white)
+![Licence](https://img.shields.io/badge/Licence-MIT-blue.svg)
+![Statut](https://img.shields.io/badge/État-En%20développement-yellow)
+
 ## 🧩 Concept
 
 **Echo Trail** est un jeu de plateforme 3D minimaliste basé sur une mécanique centrale : le joueur laisse derrière lui, à intervalles réguliers, des clones statiques appelés **échos**. Ces échos deviennent des éléments interactifs du décor, permettant de résoudre des énigmes spatiales et temporelles.
