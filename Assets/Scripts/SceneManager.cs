@@ -23,6 +23,8 @@ public class SceneManager : MonoBehaviour
     public GameObject player;
     public GameObject spawner;
 
+    public GameObject winText;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,6 +32,7 @@ public class SceneManager : MonoBehaviour
         _currentStartCounterTime = _startCounterTime;
         SetEchoCountText();
         SetActiveState(false);
+        winText.SetActive(false);
     }
 
     // Update is called once per frame
@@ -99,6 +102,15 @@ public class SceneManager : MonoBehaviour
         _timerActive = true;
 
         _startCounterActive = true;
+    }
+
+    public void WinGame()
+    {
+        _timerActive = false;
+        winText.SetActive(true);
+        player.SetActive(false);
+        timerText.gameObject.SetActive(false);
+        echoCountText.gameObject.SetActive(false);
     }
     
     private void SetEchoCountText()

@@ -46,8 +46,12 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = new Vector3(input.x * speed, rb.linearVelocity.y, rb.linearVelocity.z);
     }
 
-    private void FixedUpdate()
+    private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.CompareTag("FinishLevel"))
+        {
+            sceneManagerScript.WinGame();
+        }
     }
 
     private bool IsGrounded()
