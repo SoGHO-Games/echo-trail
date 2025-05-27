@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using SceneManager = UnityEngine.SceneManagement.SceneManager;
+using UnityEngine.SceneManagement;
 
 public class LevelSelection : MonoBehaviour
 {
@@ -14,24 +14,33 @@ public class LevelSelection : MonoBehaviour
 
     void Start()
     {
-        RenderButtons();
+        CreateLevelButtons();
     }
 
-    private void RenderButtons()
+    private void CreateLevelButtons()
     {
-
-        // Create level buttons
-        for (int i = 1; i <= 5; i++)
+        int sceneCount = UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings;
+        bool alreadySelected = false;
+        for (int i = 0; i < sceneCount; i++)
         {
-            Transform button = Instantiate(levelButtonTemplate, transform);
-
-            if (i == 1)
+            var sceneName = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
+            if(sceneName.StartsWith("Level "))
             {
-                eventSystem.SetSelectedGameObject(button.gameObject);
-            }
+                Transform button = Instantiate(levelButtonTemplate, transform);
 
-            button.GetComponentInChildren<TMP_Text>().text = "Level " + i;
-            levelButtons.Add(button);
+                if (!alreadySelected)
+                {
+                    eventSystem.SetSelectedGameObject(button.gameObject);
+                    alreadySelected = true;
+                }
+                
+                button.GetComponentInChildren<TMP_Text>().text = sceneName;
+                button.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                {
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+                });
+                levelButtons.Add(button);
+            };
         }
     }
 
