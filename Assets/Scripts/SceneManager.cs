@@ -89,7 +89,8 @@ public class SceneManager : MonoBehaviour
         {
             // Destroy the oldest echo if we have reached the maximum number of echoes
             Transform oldEcho = _echoQueue.Dequeue();
-            Destroy(oldEcho.gameObject);
+            oldEcho.GetComponent<BoxCollider>().transform.position = new Vector3(-1000, -1000, -1000);
+            Destroy(oldEcho.gameObject, 0.1f);
         }
         _echoQueue.Enqueue(newEcho);
         SetEchoCountText();
