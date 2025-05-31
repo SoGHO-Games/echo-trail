@@ -104,6 +104,27 @@ public class SceneManager : MonoBehaviour
         _startCounterActive = true;
     }
 
+    public void RestartLevel()
+    {
+        // Reset the timer
+        _currentTime = timelimit;
+        _timerActive = true;
+
+        // Clear the echoes
+        while (_echoQueue.Count > 0)
+        {
+            Transform echo = _echoQueue.Dequeue();
+            Destroy(echo.gameObject);
+        }
+        SetEchoCountText();
+
+        // Reset player position
+        player.transform.position = spawner.transform.position;
+        player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+
+        _startCounterActive = true;
+    }
+
     public void WinGame()
     {
         _timerActive = false;

@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction putEchoAction;
+    private InputAction restartLevelAction;
     private float speed = 6f;
     private float jump = 7.5f;
     
@@ -22,9 +23,11 @@ public class PlayerController : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
         putEchoAction = InputSystem.actions.FindAction("PutEcho");
+        restartLevelAction = InputSystem.actions.FindAction("RestartLevel");
 
         jumpAction.performed += Jump_Performed;
         putEchoAction.performed += PutEcho_Performed;
+        restartLevelAction.performed += RestartLevel_Performed;
     }
 
     private void PutEcho_Performed(InputAction.CallbackContext context)
@@ -32,9 +35,14 @@ public class PlayerController : MonoBehaviour
         sceneManagerScript.RespawnPlayer();
     }
 
+    private void RestartLevel_Performed(InputAction.CallbackContext context)
+    {
+        sceneManagerScript.RestartLevel();
+    }
+
     private void Jump_Performed(InputAction.CallbackContext context)
     {
-        if(IsGrounded())
+        if (IsGrounded())
         {
             rb.AddForce(Vector3.up * jump, ForceMode.Impulse);
         }
