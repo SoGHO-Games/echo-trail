@@ -60,6 +60,11 @@ public class PlayerController : MonoBehaviour
         {
             sceneManagerScript.WinGame();
         }
+
+        if (collision.gameObject.CompareTag("DeadZone"))
+        {
+            sceneManagerScript.RespawnPlayer(isDeath: true);
+        }
     }
 
     private bool IsGrounded()

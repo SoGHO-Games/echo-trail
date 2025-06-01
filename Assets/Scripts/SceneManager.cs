@@ -13,7 +13,6 @@ public class SceneManager : MonoBehaviour
     public int maxEchoes = 3;
     private Queue<Transform> _echoQueue = new Queue<Transform>();
 
-
     public TMP_Text startCounterText;
     private float _currentStartCounterTime;
     private float _startCounterTime = 4f;
@@ -24,6 +23,10 @@ public class SceneManager : MonoBehaviour
     public GameObject spawner;
 
     public GameObject winText;
+    public TMP_Text echoesUsedCountText;
+    public TMP_Text totalDeadCountText;
+    private int _echoesUsedCount = 0;
+    private int _totalDeadCount = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -77,23 +80,31 @@ public class SceneManager : MonoBehaviour
     {
         timerText.gameObject.SetActive(activeState);
         player.SetActive(activeState);
-        echoCountText.gameObject.SetActive(activeState);
         startCounterText.gameObject.SetActive(!activeState);
     }
 
-    public void RespawnPlayer()
+    public void RespawnPlayer(bool isDeath = false)
     {
-        // Instantiate the echo prefab at the player's position
-        var newEcho = Instantiate(prefabEcho, player.transform.position, Quaternion.identity);
-        if (_echoQueue.Count >= maxEchoes)
+        if (isDeath)
         {
-            // Destroy the oldest echo if we have reached the maximum number of echoes
-            Transform oldEcho = _echoQueue.Dequeue();
-            oldEcho.GetComponent<BoxCollider>().transform.position = new Vector3(-1000, -1000, -1000);
-            Destroy(oldEcho.gameObject, 0.1f);
+            _totalDeadCount++;
+            totalDeadCountText.text = $"Total deaths: {_totalDeadCount}";
         }
-        _echoQueue.Enqueue(newEcho);
-        SetEchoCountText();
+        else
+        {
+            // Instantiate the echo prefab at the player's position
+            _echoesUsedCount++;
+            var newEcho = Instantiate(prefabEcho, player.transform.position, Quaternion.identity);
+            if (_echoQueue.Count >= maxEchoes)
+            {
+                // Destroy the oldest echo if we have reached the maximum number of echoes
+                Transform oldEcho = _echoQueue.Dequeue();
+                oldEcho.GetComponent<BoxCollider>().transform.position = new Vector3(-1000, -1000, -1000);
+                Destroy(oldEcho.gameObject, 0.1f);
+            }
+            _echoQueue.Enqueue(newEcho);
+            SetEchoCountText();
+        }
 
         player.transform.position = spawner.transform.position;
         player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
@@ -115,7 +126,8 @@ public class SceneManager : MonoBehaviour
         while (_echoQueue.Count > 0)
         {
             Transform echo = _echoQueue.Dequeue();
-            Destroy(echo.gameObject);
+            echo.GetComponent<BoxCollider>().transform.position = new Vector3(-1000, -1000, -1000);
+            Destroy(echo.gameObject, 0.1f);
         }
         SetEchoCountText();
 
@@ -132,11 +144,11 @@ public class SceneManager : MonoBehaviour
         winText.SetActive(true);
         player.SetActive(false);
         timerText.gameObject.SetActive(false);
-        echoCountText.gameObject.SetActive(false);
     }
-    
+
     private void SetEchoCountText()
     {
         echoCountText.text = $"Echoes: {_echoQueue.Count}/{maxEchoes}";
+        echoesUsedCountText.text = $"Echoes used: {_echoesUsedCount}";
     }
 }

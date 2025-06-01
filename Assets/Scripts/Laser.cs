@@ -20,7 +20,8 @@ public class Laser : MonoBehaviour
             lineRenderer.SetPosition(1, hit.point);
             if (hit.transform.CompareTag("Player"))
             {
-                Debug.Log("Laser hit the player!");
+                var sceneManager = FindAnyObjectByType<SceneManager>();
+                sceneManager.RespawnPlayer(isDeath: true);
             }
         }
         else

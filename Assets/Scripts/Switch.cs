@@ -23,4 +23,20 @@ public class Switch : MonoBehaviour
     {
         targetObject.SetActive(!activate);
     }
+
+    void FixedUpdate()
+    {
+        if (GetComponent<Collider>().enabled)
+        {
+            foreach (Collider col in Physics.OverlapBox(transform.position, GetComponent<Collider>().bounds.extents))
+            {
+                if (col.CompareTag("Player") || col.CompareTag("Echo"))
+                {
+                    ToggleSwitch(true);
+                    return;
+                }
+            }
+            ToggleSwitch(false);
+        }
+    }
 }
