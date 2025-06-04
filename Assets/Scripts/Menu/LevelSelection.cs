@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,7 +25,7 @@ public class LevelSelection : MonoBehaviour
         for (int i = 0; i < sceneCount; i++)
         {
             var sceneName = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
-            if(sceneName.StartsWith("Level "))
+            if (sceneName.StartsWith("Level "))
             {
                 Transform button = Instantiate(levelButtonTemplate, transform);
 
@@ -33,14 +34,24 @@ public class LevelSelection : MonoBehaviour
                     eventSystem.SetSelectedGameObject(button.gameObject);
                     alreadySelected = true;
                 }
-                
+
                 button.GetComponentInChildren<TMP_Text>().text = sceneName;
                 button.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
                 {
                     UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
                 });
                 levelButtons.Add(button);
-            };
+            }
+            ;
+        }
+
+        if(levelButtons.Count > GameManager.Instance.ActiveLevelIndex)
+        {
+            eventSystem.SetSelectedGameObject(levelButtons[GameManager.Instance.ActiveLevelIndex].gameObject);
+        }
+        else
+        {
+            eventSystem.SetSelectedGameObject(levelButtons.Last().gameObject);
         }
     }
 
@@ -57,17 +68,20 @@ public class LevelSelection : MonoBehaviour
         var selectedButton = eventSystem.currentSelectedGameObject;
         var indexSelected = levelButtons.FindIndex(button => button.gameObject == selectedButton);
 
-        if (indexSelected >= 1)
+        if (indexSelected >= 1 && GameManager.Instance.ActiveLevelIndex >= indexSelected - 1)
         {
             levelButtons[indexSelected - 1].gameObject.SetActive(true);
             levelButtons[indexSelected - 1].transform.position = new Vector3(levelButtonTemplate.transform.position.x, position, levelButtonTemplate.transform.position.z);
         }
 
-        position -= 75f;
-        levelButtons[indexSelected].gameObject.SetActive(true);
-        levelButtons[indexSelected].transform.position = new Vector3(levelButtonTemplate.transform.position.x, position, levelButtonTemplate.transform.position.z);
+        if(GameManager.Instance.ActiveLevelIndex >= indexSelected)
+        {
+            position -= 75f;
+            levelButtons[indexSelected].gameObject.SetActive(true);
+            levelButtons[indexSelected].transform.position = new Vector3(levelButtonTemplate.transform.position.x, position, levelButtonTemplate.transform.position.z);
+        }
 
-        if(indexSelected + 1 < levelButtons.Count)
+        if(indexSelected + 1 < levelButtons.Count && GameManager.Instance.ActiveLevelIndex >= indexSelected + 1)
         {
             position -= 75f;
             levelButtons[indexSelected + 1].gameObject.SetActive(true);

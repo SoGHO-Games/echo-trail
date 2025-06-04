@@ -28,6 +28,8 @@ public class SceneManager : MonoBehaviour
     private int _echoesUsedCount = 0;
     private int _totalDeadCount = 0;
 
+    public int NextLevelIndex = 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -144,6 +146,19 @@ public class SceneManager : MonoBehaviour
         winText.SetActive(true);
         player.SetActive(false);
         timerText.gameObject.SetActive(false);
+
+        if (NextLevelIndex > GameManager.Instance.ActiveLevelIndex)
+        {
+            GameManager.Instance.ActiveLevelIndex = NextLevelIndex;
+        }
+        
+        // Go to the next level after a short delay
+        Invoke(nameof(GoToLevelSelection), 2f);
+    }
+
+    private void GoToLevelSelection()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("LevelSelectionScene");
     }
 
     private void SetEchoCountText()

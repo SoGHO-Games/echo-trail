@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     private InputAction restartLevelAction;
     private float speed = 6f;
     private float jump = 7.5f;
-    
+
     public GameObject sceneManager;
     private SceneManager sceneManagerScript;
 
@@ -21,6 +21,10 @@ public class PlayerController : MonoBehaviour
         sceneManagerScript = sceneManager.GetComponent<SceneManager>();
 
         moveAction = InputSystem.actions.FindAction("Move");
+    }
+
+    private void OnEnable()
+    {
         jumpAction = InputSystem.actions.FindAction("Jump");
         putEchoAction = InputSystem.actions.FindAction("PutEcho");
         restartLevelAction = InputSystem.actions.FindAction("RestartLevel");
@@ -70,10 +74,17 @@ public class PlayerController : MonoBehaviour
     private bool IsGrounded()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.5f))
+        if (transform != null && Physics.Raycast(transform.position, Vector3.down, out hit, 0.5f))
         {
             return true;
         }
         return false;
+    }
+
+    void OnDisable()
+    {
+        jumpAction.performed -= Jump_Performed;
+        putEchoAction.performed -= PutEcho_Performed;
+        restartLevelAction.performed -= RestartLevel_Performed;
     }
 }

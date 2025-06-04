@@ -1035,6 +1035,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 926363812}
     - target: {fileID: 5344175096122888618, guid: aa9654c19abe38a4ab0bc57fc8e6a631, type: 3}
+      propertyPath: NextLevelIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344175096122888618, guid: aa9654c19abe38a4ab0bc57fc8e6a631, type: 3}
       propertyPath: startCounterText
       value: 
       objectReference: {fileID: 285558728}
