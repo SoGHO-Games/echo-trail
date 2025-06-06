@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class LevelSelection : MonoBehaviour
@@ -12,40 +14,51 @@ public class LevelSelection : MonoBehaviour
     public EventSystem eventSystem;
 
     private List<Transform> levelButtons = new List<Transform>();
+    private InputAction cancelAction;
 
     void Start()
     {
         CreateLevelButtons();
     }
 
+    private void OnEnable()
+    {
+        cancelAction = InputSystem.actions.FindAction("Cancel");
+        cancelAction.performed += CancelAction_Performed;
+    }
+
+    private void CancelAction_Performed(InputAction.CallbackContext context)
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
+    }
+
+    void OnDisable()
+    {
+        cancelAction.performed -= CancelAction_Performed;
+    }
+
     private void CreateLevelButtons()
     {
-        int sceneCount = UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings;
+        Debug.Log("Creating level buttons...");
         bool alreadySelected = false;
-        for (int i = 0; i < sceneCount; i++)
+
+        foreach (var levelData in GameManager.Instance.LevelDatas)
         {
-            var sceneName = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
-            if (sceneName.StartsWith("Level "))
+            Transform button = Instantiate(levelButtonTemplate, transform);
+            if (!alreadySelected)
             {
-                Transform button = Instantiate(levelButtonTemplate, transform);
-
-                if (!alreadySelected)
-                {
-                    eventSystem.SetSelectedGameObject(button.gameObject);
-                    alreadySelected = true;
-                }
-
-                button.GetComponentInChildren<TMP_Text>().text = sceneName;
-                button.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
-                {
-                    UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
-                });
-                levelButtons.Add(button);
+                eventSystem.SetSelectedGameObject(button.gameObject);
+                alreadySelected = true;
             }
-            ;
+            button.GetComponentInChildren<TMP_Text>().text = levelData.GetDisplayName();
+            button.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(levelData.LevelName);
+            });
+            levelButtons.Add(button);
         }
 
-        if(levelButtons.Count > GameManager.Instance.ActiveLevelIndex)
+        if (levelButtons.Count > GameManager.Instance.ActiveLevelIndex)
         {
             eventSystem.SetSelectedGameObject(levelButtons[GameManager.Instance.ActiveLevelIndex].gameObject);
         }

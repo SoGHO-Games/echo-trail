@@ -149,6 +149,7 @@ public class SceneManager : MonoBehaviour
 
         if (NextLevelIndex > GameManager.Instance.ActiveLevelIndex)
         {
+            GameManager.Instance.CloseLevel(NextLevelIndex - 1, _echoesUsedCount, _totalDeadCount);
             GameManager.Instance.ActiveLevelIndex = NextLevelIndex;
         }
         
